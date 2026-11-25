@@ -21,6 +21,17 @@ Most PR-description skills assume the reviewer will still read the diff, so they
 
 It also refuses to invent the why: motivation must come from a source or be marked as not stated.
 
+## Requires pstack
+
+Both skills assume [pstack](https://github.com/cursor/plugins/tree/main/pstack) (Lauren Tan's engineering skills, MIT) is installed, and leave to it what it already covers rather than repeat it:
+
+- Prose style and AI tells: `technical-writing`, `unslop`.
+- What a change can break: `blast-radius`.
+- Decision trail: `show-me-your-work`.
+- Plan file format, unit sequencing, stacking, and opening the PR: poteto-mode playbooks `multi-phase-plan`, `opening-a-pr`, `autopilot-stack`, and `principle-sequence-verifiable-units`.
+
+`write-pr-description` keeps pstack's PR body headings (Why, What changed, Scope, Tradeoffs, Blast Radius, Verification) and adds a Review guide. It deliberately replaces the opening-a-pr playbook's 40-line limit, because a body a reviewer approves from needs more room than a one-minute briefing. Without pstack the skills still work; they skip those steps and say so.
+
 ## Install
 
 Copy a skill folder into one of the places your agent loads skills from. For Claude Code:
@@ -50,7 +61,7 @@ The skills are original text, built on ideas from these sources:
 
 The examples in `examples.md` are fictional and written for this repository.
 
-Sources were read on 2026-11-25.
+Sources were read on 2026-11-25. pstack was read from the backnotprop/pstack mirror of cursor/plugins at its 2026-11-25 sync.
 
 ## License
 
