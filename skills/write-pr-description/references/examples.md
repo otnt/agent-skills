@@ -43,6 +43,10 @@ The `rows_ingested` metric overcounts by the number of retried batches, so dashb
 
 `BatchWriter.write()` increments `rows_ingested` before it calls `commit()`. When `commit()` aborts and the batch is retried, the increment runs again for the same rows. Successful first attempts were counted correctly, which is why the overcount only appeared under contention.
 
+    batch of 100 rows: abort, abort, commit
+    before:  rows_ingested += 100  x3  ->  300
+    after:   rows_ingested += 100  x1  ->  100
+
 ### After
 
 The increment moves after a successful `commit()`, and counts the rows the commit reports, not the rows in the request. A retried batch is now counted once. A batch that fails all retries is no longer counted at all (before, it was counted once per attempt).
@@ -68,6 +72,7 @@ The increment moves after a successful `commit()`, and counts the rows the commi
 
 Why it works:
 
+- A three-line example shows the overcount faster than a paragraph could, and the claim check can verify it.
 - Before names the exact faulty mechanism, so a reviewer can check the fix against the cause without reading the old code.
 - After states a second behavior change (failed batches no longer counted) that a reviewer could easily miss in the diff.
 - The one tradeoff answers the question a reviewer would ask ("why not de-duplicate at read time?"), in one sentence.

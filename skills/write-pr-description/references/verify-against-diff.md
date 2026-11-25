@@ -31,7 +31,7 @@ List every sentence in the body that asserts a fact. Split compound sentences so
 - **Validation:** "The new test fails on main and passes here." "Ran the load test: p99 went from 40 ms to 12 ms."
 - **Provenance:** "Fixes #123." "As decided in the design doc."
 
-Skip opinions and the why (motivation is checked against its source in step 1 of the skill, not against the diff).
+Claims in examples, code blocks, and diagrams count too: each arrow in a diagram and each before/after pair in an example is a claim. Skip opinions and the why (motivation is checked against its source in step 1 of the skill, not against the diff).
 
 ### 2. Mark each claim
 

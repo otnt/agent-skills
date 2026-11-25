@@ -95,7 +95,7 @@ Name the regression each new test would catch and what is **not** covered. Never
 
 ### PR-specific writing rules
 
-Run pstack `technical-writing` and `unslop` over the finished body. In addition, three rules specific to PR bodies:
+Run pstack `technical-writing` and `unslop` over the finished body. In addition, four rules specific to PR bodies:
 
 - **Present the final state as if it were the first version.** What gets committed is the only version a reviewer or a future reader sees. Iterations you went through while building it (a v1 that became v2, then v3) are your process, not the change. Write as though v3 were written directly:
   - No version or iteration language: "v2", "the new approach", "now uses", "instead of the earlier", "originally", "after trying", "we switched to", "this PR previously", "after review I removed".
@@ -103,6 +103,13 @@ Run pstack `technical-writing` and `unslop` over the finished body. In addition,
   - "Now" and "before" refer only to the base branch versus this PR, never to earlier commits of this branch.
   - Keep a reason only if it passes the step 1 test, and state it about the code, not about your history: "There is no unit test at this layer, because it would only restate the match arms", not "I removed the unit tests after review."
   - The same holds for code comments and commit messages on the branch: they describe what the code does and why, never its development history. For a full comment sweep, use pstack `no-comments`.
+- **Show, don't tell.** Wherever a paragraph explains a shape or a flow, replace it with something the reader can see:
+  - A concrete example: a real input and its output, before and after. This is the default, and the most useful one.
+  - A `diff` or code block for a changed interface, config, or data shape.
+  - A diagram when several components interact or a state machine changes: Mermaid where the host renders it, ASCII art otherwise.
+  - An image (a screenshot, or a generated image if nothing else works) only for a visual change. The diff check cannot read an image, so state its key facts in text as well.
+
+  Every visual carries information. Keep one sentence above it that says what to notice. No decorative emoji, color, or badges.
 - **Write less.** Agents over-write, and every extra sentence costs the reviewer. Prefer the shortest body that still lets a reviewer approve from it. Cut: a walkthrough of the diff, paraphrases of new code comments, lists of test names, a fact stated twice, a decision nobody would question. **Never cut** the why, a behavior change, a risk, or a "read the code here" pointer.
 - **Length follows the design to explain, not the diff size.** A mechanical change is one short paragraph. A focused fix is about 50 to 200 words. A feature with a real design is about 200 to 600. Over about 800, go back to step 0: the PR likely wants splitting.
 
