@@ -128,9 +128,7 @@ Every time, before creating or updating the PR. Follow [references/verify-agains
 
 Give the check to a subagent that receives only the diff and the body, not this session's history. A checker that shares your context tends to agree with you. Do not post while any claim is contradicted.
 
-## 5. Create or update the PR
-
-Use pstack's opening-a-pr playbook for the mechanics if you are in a pstack run; otherwise `gh pr create --body-file`. When updating an existing PR, read the current body first and keep what a person put there: screenshots, links, ticked boxes, a personal note at the top, because `gh pr edit --body-file` replaces the whole body. After later pushes that change behavior, scope, or risk, rewrite the body to match and run step 4 again. Do not append a revision log.
+After any later push that changes behavior, scope, or risk, rewrite the body to match the branch and run this check again. Do not append a revision log.
 
 ## Examples
 
