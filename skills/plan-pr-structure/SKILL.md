@@ -58,7 +58,7 @@ Most oversized PRs were planned small and grew.
 
 - **Commit along the plan.** One or more commits per planned PR, never one commit that spans two.
 - **Keep unplanned work out.** When you find a bug next door, a cleanup, or a missing helper, do not fold it in. Note it, and either make it a separate small PR or add it to the plan. Tell the user if it changes the plan.
-- **Record each decision when you make it,** in the pstack decision log: what you chose, what you rejected, and why. `write-pr-description` reads it, and the reasons are not recoverable from the diff later.
+- **Record decisions in the pstack decision log, not in the code.** The log is your working trail; most of it never reaches the PR. Code comments and commit messages describe the final code, not the iterations that led to it.
 - **Check the size at natural stopping points** with `git diff --stat <base>...HEAD`. If the branch has grown past its reason, or well past the planned size, stop and re-plan before writing more.
 
 ## 4. Keep every layer green
@@ -90,7 +90,7 @@ Rarely. Generated changes from a trusted tool, file deletions, and tool-driven m
 
 ## 7. Hand-off to the description
 
-Each PR's description (`write-pr-description`) states its one reason under Why, names its part of the plan with a link under Scope, lists the later parts as out of scope, and takes its tradeoffs from the decision log.
+Each PR's description (`write-pr-description`) states its one reason under Why, names its part of the plan with a link under Scope, lists the later parts as out of scope, and takes a tradeoff from the decision log only when a reviewer would otherwise ask "why not X?".
 
 ## Anti-patterns
 

@@ -52,7 +52,11 @@ Walk the diff hunk by hunk. For each hunk that changes behavior, find the claim 
 
 Pay extra attention to: default values, error handling paths, config and flag files, permission and auth lines, migrations, public signatures, and deleted code. Removed lines change behavior as often as added ones.
 
-### 4. Report
+### 4. Find history leaks
+
+List every sentence that describes this branch's development instead of its final state: versions or iterations ("v2", "the new approach", "originally", "after trying", "instead of the earlier"), "now" or "previously" that compares against an earlier commit of the branch rather than the base, and exploration narrative. Each one is a defect. Do the same for comments the diff adds.
+
+### 5. Report
 
 Write the result in this form (it is for the writer, not for the PR body):
 
@@ -72,15 +76,19 @@ unsupported:
 uncovered behavior changes:
 - config/defaults.yaml:12 raises max_retries from 3 to 5.
 
+history leaks:
+- "The new approach batches writes instead of the earlier per-row version" -> the base has no per-row version; describe batching only.
+
 mechanical (not described, safe to skim):
 - *_pb.go regenerated; go.sum.
 ```
 
-### 5. Fix
+### 6. Fix
 
 - **Contradicted:** fix the body. If the code is the one that is wrong, tell the user; do not quietly change the code inside a description task.
 - **Partial:** narrow the claim to what is true, or name the exception.
 - **Unsupported:** add the evidence (a link, the command and its output), mark it as not checked, or delete it.
+- **History leak:** rewrite the sentence to describe the final state only, or delete it.
 - **Uncovered:** describe the change in the body, or add it to the review guide's "Read the code here" list with the question a reviewer should answer.
 
 Run the check again on the changed parts. The body is ready when nothing is contradicted and every uncovered behavior change is either described or listed for the reviewer to read.

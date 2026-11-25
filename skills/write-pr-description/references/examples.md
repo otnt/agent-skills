@@ -70,7 +70,7 @@ Why it works:
 
 - Before names the exact faulty mechanism, so a reviewer can check the fix against the cause without reading the old code.
 - After states a second behavior change (failed batches no longer counted) that a reviewer could easily miss in the diff.
-- The rejected alternative has a concrete reason.
+- The one tradeoff answers the question a reviewer would ask ("why not de-duplicate at read time?"), in one sentence.
 - Verification separates what ran from what is expected, and says which test fails on main.
 - The review guide says the body is complete, and still points at the one line where a mistake would be invisible in prose.
 
@@ -117,9 +117,7 @@ Admin UI for editing quotas (planned as the next PR). Quotas for writes.
 
 ## Tradeoffs
 
-- **Rows scanned, not request count.** One request can scan one row or a billion. The incidents were caused by a few very large scans, which a request-count limit would not have stopped.
-- **Estimate before execution, not charge after.** Charging after lets an expensive query run in full before the limit acts. The cost is that a bad estimate under-charges; the plan estimate was within 2x on 97% of last month's queries (notebook linked).
-- **Per-replica buckets, not a shared counter.** A shared counter adds a network call to every read. Per-replica buckets are approximate when load is uneven across replicas, which the per-replica quota value accepts.
+Quotas count rows scanned, not requests: one request can scan one row or a billion, and the incidents came from a few very large scans that a request limit would not have stopped.
 
 ## Blast Radius
 
@@ -139,7 +137,7 @@ Why it works:
 - The review guide is near the top and names exactly which code the body does not fully specify. Everything else can be approved from the body.
 - The design gives the contract (proto), the behavior in each case, and what does not change. A reviewer could write a test from it.
 - A non-obvious consequence of the design (quota multiplied by replica count) is stated, not left for the reviewer to deduce.
-- Each decision names the alternative and the evidence behind the choice.
+- It keeps one decision, the one a reviewer would raise ("why not limit requests?"), and drops the others made along the way. Estimating cost before execution and keeping buckets per replica are visible in What changed; nobody needs a paragraph defending them.
 
 ---
 
@@ -214,3 +212,29 @@ What is wrong, and which rule it breaks:
 - The Changes list restates the file list, which the diff already shows, and omits every behavior: what happens over quota, who is exempt, what the default is. (Step 3.)
 - No decisions, no risks, no mention that the flag ships off. A reviewer has to read all of the code to learn any of it, so the description does nothing for the goal of approving from the body.
 - "All tests pass" repeats CI. "Tested thoroughly in staging" is unsupported: what ran, and what did it show? (Step 3, Verification.)
+
+---
+
+## Anti-example: the branch's history leaks into the body
+
+```markdown
+## What changed
+
+Initially I added a mutex around the cache, but that caused contention under load, so the next version switched to a sharded map. After review feedback, the final approach uses `sync.Map` instead, which is simpler. The earlier sharding code was removed.
+
+## Tradeoffs
+
+- Considered a mutex (v1): too much contention.
+- Considered sharding (v2): more code than needed.
+- Considered an LRU library: not needed yet.
+```
+
+The reviewer sees one diff against the base: a new cache backed by `sync.Map`. The mutex and the sharded map never existed on the base, so every sentence about them describes something the reviewer cannot see. Written as if the final version were the first:
+
+```markdown
+## What changed
+
+Resolved tenant configs are cached in a `sync.Map`, so concurrent readers do not serialize on a lock. Entries never expire; the cache holds at most one entry per tenant, about 2,000 today.
+```
+
+No tradeoffs section: nobody reviewing a `sync.Map` cache would ask why it is not a sharded map. The "entries never expire" line stays, because that is a behavior a reviewer needs.

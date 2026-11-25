@@ -36,14 +36,14 @@ State the change's purpose in one sentence without "and".
 If you cannot, the PR probably does more than one thing: for example a refactor plus a behavior change, or two unrelated fixes.
 Stop and tell the user. Suggest the split (see `plan-pr-structure`) and let them decide. If they keep one PR, describe each part under its own sub-heading and say in the opening that the PR combines them.
 
-A description cannot make a large PR safe to approve unread. A body over about 1,200 words, or a review guide that needs a long reading order, means the PR wants splitting, not a better description.
+A description cannot make a large PR safe to approve unread. A body over about 800 words, or a review guide that needs a long reading order, means the PR wants splitting, not a better description.
 
 ## 1. Collect the facts
 
 Most of what the body needs is not in the diff.
 
 - **The why.** What breaks, costs, or is impossible without this change, and for whom. Take it from a source: the user's request in this session, a linked issue, a design doc, the plan file, the decision log, a commit body. **Never invent the why.** If no source gives it, ask the user. If they are not available, write "Motivation: not stated in any source; please confirm". An invented rationale is the claim a reviewer is least able to check.
-- **Decisions.** Each choice with a real alternative, the alternative, and why it lost. Take them from the decision log and the session, not from memory of the finished code. Do not manufacture alternatives.
+- **Decisions, rarely.** Most choices made while building the PR are exploration, not decisions a reviewer needs. Keep one only when a reviewer reading the final code would plausibly ask "why not the obvious alternative?" and the answer is not in the code. Take the reason from the decision log or the session. Most PRs need zero or one; more than two is a sign you are documenting your process. Never manufacture an alternative.
 - **The design.** New or changed contracts: APIs, schemas, data formats, invariants, state machines, concurrency rules, error semantics.
 - **Behavior changes,** including side effects, and what is deliberately unchanged.
 - **Blast radius.** For anything beyond a mechanical change, run pstack `blast-radius` and use its confirmed risks and the one fact it proved.
@@ -93,7 +93,7 @@ For a bug fix, use **Before** (the faulty mechanism, naming the function or path
 
 **`## Scope`.** What is deliberately out of this PR, and, for a planned series, which part this is, with a link to the plan or the previous PR.
 
-**`## Tradeoffs`.** Each decision with its rejected alternative and why it lost, plus the shortcomings of the chosen approach. This is the content a reviewer most needs and can least recover from the diff.
+**`## Tradeoffs`.** Usually omitted. Include it only for a decision that passes the test in step 1 (a reviewer would otherwise ask "why not X?"), in one or two sentences, plus any real shortcoming of the chosen approach. Name the alternative as an option a reviewer might suggest, never as an earlier version of this PR.
 
 **`## Blast Radius`.** From pstack `blast-radius`: the confirmed risks with their cost, the one fact the change is safe because of and how far it was proved (pointed at a line, ran a script, reproduced), one-way doors (stored formats, public APIs, migrations), and rollback.
 
@@ -108,10 +108,16 @@ Name the regression each new test would catch and what is **not** covered. Never
 
 ### PR-specific writing rules
 
-Run pstack `technical-writing` and `unslop` over the finished body. In addition, two rules specific to PR bodies:
+Run pstack `technical-writing` and `unslop` over the finished body. In addition, three rules specific to PR bodies:
 
-- **Describe the branch as it is, not how it got there.** No "this PR previously..." or "after review I removed...". Keep the reasoning, drop the transition: "There is no unit test at this layer, because it would only restate the match arms."
-- **Cut what does not help the reviewer decide something:** a walkthrough of the diff, paraphrases of new code comments, lists of test names, a fact stated twice. **Never cut** the why, a behavior change, a decision with its alternative, a risk, or a "read the code here" pointer. Length follows the design to explain, not the diff size: a mechanical change is a short paragraph, a focused fix 100 to 300 words, a feature 300 to 900. Over about 1,200, go back to step 0.
+- **Present the final state as if it were the first version.** What gets committed is the only version a reviewer or a future reader sees. Iterations you went through while building it (a v1 that became v2, then v3) are your process, not the change. Write as though v3 were written directly:
+  - No version or iteration language: "v2", "the new approach", "now uses", "instead of the earlier", "originally", "after trying", "we switched to", "this PR previously", "after review I removed".
+  - No exploration narrative: what you tried, what failed, how you arrived here.
+  - "Now" and "before" refer only to the base branch versus this PR, never to earlier commits of this branch.
+  - Keep a reason only if it passes the step 1 test, and state it about the code, not about your history: "There is no unit test at this layer, because it would only restate the match arms", not "I removed the unit tests after review."
+  - The same holds for code comments and commit messages on the branch: they describe what the code does and why, never its development history. For a full comment sweep, use pstack `no-comments`.
+- **Write less.** Agents over-write, and every extra sentence costs the reviewer. Prefer the shortest body that still lets a reviewer approve from it. Cut: a walkthrough of the diff, paraphrases of new code comments, lists of test names, a fact stated twice, a decision nobody would question. **Never cut** the why, a behavior change, a risk, or a "read the code here" pointer.
+- **Length follows the design to explain, not the diff size.** A mechanical change is one short paragraph. A focused fix is about 50 to 200 words. A feature with a real design is about 200 to 600. Over about 800, go back to step 0: the PR likely wants splitting.
 
 ## 4. Self-check
 
@@ -120,7 +126,8 @@ Run pstack `technical-writing` and `unslop` over the finished body. In addition,
 - Could a reviewer predict the changed code's behavior from the body alone, except where "Read the code here" says otherwise?
 - Is every behavior change, including side effects, listed?
 - Does every verification claim describe something that ran, or say it did not?
-- Does the body describe the branch as it is now?
+- Does the body read as if the final version were the first, with no versions, iterations, or exploration?
+- Does every decision left in pass the "reviewer would ask why not X" test? Could the body lose one more sentence?
 
 ## 5. Check the body against the diff
 
@@ -129,7 +136,8 @@ Every time, before creating or updating the PR. Follow [references/verify-agains
 1. Extract every factual claim from the body.
 2. Mark each one **verified**, **partial**, **unsupported**, or **contradicted** against the diff, citing `file:line`.
 3. List the behavior changes in the diff that the body does not mention.
-4. Fix the body until nothing is contradicted, and each uncovered change is either described or listed under "Read the code here".
+4. List history leaks: sentences that describe the branch's iterations instead of its final state.
+5. Fix the body until nothing is contradicted, no history leaks remain, and each uncovered change is either described or listed under "Read the code here".
 
 Give the check to a subagent that receives only the diff and the body, not this session's history. A checker that shares your context tends to agree with you. Do not post while any claim is contradicted.
 
