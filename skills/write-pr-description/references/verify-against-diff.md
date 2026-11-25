@@ -89,7 +89,7 @@ mechanical (not described, safe to skim):
 - **Partial:** narrow the claim to what is true, or name the exception.
 - **Unsupported:** add the evidence (a link, the command and its output), mark it as not checked, or delete it.
 - **History leak:** rewrite the sentence to describe the final state only, or delete it.
-- **Uncovered:** describe the change in the body, or add it to the review guide's "Read the code here" list with the question a reviewer should answer.
+- **Uncovered:** describe the change in the body, or add it to the "Read the code here" list with the question a reviewer should answer.
 
 Run the check again on the changed parts. The body is ready when nothing is contradicted and every uncovered behavior change is either described or listed for the reviewer to read.
 

@@ -40,7 +40,7 @@ The skills assume [pstack](https://github.com/cursor/plugins/tree/main/pstack) (
 - What a good test asserts, and the bug-fix test loop: `principle-test-behavior-not-implementation`, `tdd`.
 - Plan file format, unit sequencing, stacking, and opening the PR: poteto-mode playbooks `multi-phase-plan`, `opening-a-pr`, `autopilot-stack`, and `principle-sequence-verifiable-units`.
 
-`write-pr-description` keeps pstack's PR body headings (Why, What changed, Scope, Tradeoffs, Blast Radius, Verification) and adds a Review guide. It deliberately replaces the opening-a-pr playbook's 40-line limit, because a body a reviewer approves from needs more room than a one-minute briefing. Without pstack the skills still work; they skip those steps and say so.
+`write-pr-description` keeps pstack's PR body headings (Why, What changed, Scope, Tradeoffs, Blast Radius, Verification) and adds a closing "Read the code here" list. It deliberately replaces the opening-a-pr playbook's 40-line limit, because a body a reviewer approves from needs more room than a one-minute briefing. Without pstack the skills still work; they skip those steps and say so.
 
 ## Install
 

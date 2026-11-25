@@ -1,6 +1,6 @@
 # Example PR descriptions
 
-These are written for this skill. Headings follow pstack's opening-a-pr playbook (Why, What changed, Scope, Tradeoffs, Blast Radius, Verification) plus this skill's Review guide. The systems and PR numbers in them are fictional, so copy the shape and the habits, not the facts.
+These are written for this skill. Headings follow pstack's opening-a-pr playbook (Why, What changed, Scope, Tradeoffs, Blast Radius, Verification) plus this skill's final Read the code here section. The systems and PR numbers in them are fictional, so copy the shape and the habits, not the facts.
 Each example is followed by notes on what makes it work.
 The first two follow the spirit of the short examples in Google's "Writing good CL descriptions" guide; the later ones show the larger changes that guide does not cover.
 
@@ -37,10 +37,6 @@ Why it works:
 
 The `rows_ingested` metric overcounts by the number of retried batches, so dashboards showed up to 30% more ingest than the table holds during the 2026-05 incident (link). Billing reads this metric, so the overcount reached invoices for two customers.
 
-## Review guide
-
-The description covers every behavior change in the diff. The one line worth reading yourself is the new increment in `batch_writer.go`, to confirm it uses the committed row count and not `len(batch)`.
-
 ## What changed
 
 ### Before
@@ -64,6 +60,10 @@ The increment moves after a successful `commit()`, and counts the rows the commi
 
 - New test `TestRetriedBatchCountedOnce` fails on main (counts 3) and passes here (counts 1).
 - Not run: the contention load test, which needs the perf cluster. Expect `rows_ingested` to match `SELECT COUNT(*)` within 0.1% on that run.
+
+## Read the code here
+
+- `batch_writer.go`, the new increment: does it use the committed row count, not `len(batch)`?
 ```
 
 Why it works:
@@ -72,7 +72,7 @@ Why it works:
 - After states a second behavior change (failed batches no longer counted) that a reviewer could easily miss in the diff.
 - The one tradeoff answers the question a reviewer would ask ("why not de-duplicate at read time?"), in one sentence.
 - Verification separates what ran from what is expected, and says which test fails on main.
-- The review guide says the body is complete, and still points at the one line where a mistake would be invisible in prose.
+- The closing list points at the one line where a mistake would be invisible in prose. Everything else can be approved from the body.
 
 ---
 
@@ -84,12 +84,6 @@ Why it works:
 ## Why
 
 One tenant's batch jobs can use all read capacity in a region, which slowed every other tenant's queries by 4 to 10 times during three incidents this quarter (postmortems linked). This adds a per-tenant read quota so one tenant can no longer starve the others. Quotas are off by default and turn on per region with a flag.
-
-## Review guide
-
-- **Read the code here:** `quota/bucket.go`, `refill()`. The description gives the rule, but the arithmetic around clock skew between replicas is where a mistake would hide.
-- **Where I am unsure:** the default burst size (2x the per-second quota). It comes from the incident traces, not from load testing.
-- **Skimmable:** `quota/quota_pb.go` is generated from `quota.proto`; review the proto. The 14 call-site changes in `handlers/` all add the same `quota.Check(ctx)` line.
 
 ## What changed
 
@@ -129,12 +123,17 @@ Quotas count rows scanned, not requests: one request can scan one row or a billi
 
 - Unit tests cover refill, burst, the wait limits for both priorities, and the `system` exemption. Not covered: clock skew between replicas.
 - Ran the replay of the 2026-07 incident traffic in staging with the flag on: other tenants' p99 stayed under 1.3x baseline (dashboard linked). With the flag off, the replay matched production behavior.
+
+## Read the code here
+
+- `quota/bucket.go`, `refill()`: is clock skew between replicas handled? The body gives the rule, but the arithmetic is where a mistake would hide.
+- The default burst size (2x the per-second quota) comes from incident traces, not load testing. Is that enough evidence?
 ```
 
 Why it works:
 
 - The opening states the problem with its size and source, the effect of the change, and that it ships off. A reviewer knows the risk level from three sentences.
-- The review guide is near the top and names exactly which code the body does not fully specify. Everything else can be approved from the body.
+- The closing list names exactly which code the body does not fully specify, and one call the author is unsure of. Everything else can be approved from the body.
 - The design gives the contract (proto), the behavior in each case, and what does not change. A reviewer could write a test from it.
 - A non-obvious consequence of the design (quota multiplied by replica count) is stated, not left for the reviewer to deduce.
 - It keeps one decision, the one a reviewer would raise ("why not limit requests?"), and drops the others made along the way. Estimating cost before execution and keeping buckets per replica are visible in What changed; nobody needs a paragraph defending them.

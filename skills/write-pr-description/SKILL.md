@@ -28,7 +28,7 @@ This skill assumes [pstack](https://github.com/cursor/plugins/tree/main/pstack) 
 | Rationale from history | pstack `why` |
 | Plan and PR order | `plan-pr-structure`, and pstack's multi-phase-plan playbook |
 
-**Relation to pstack's opening-a-pr playbook.** That playbook handles the mechanics (worktree, commits, title, opening the PR) and sets a body of at most 40 lines. This skill replaces only its body rules, because a body a reviewer approves from needs more room than a one-minute briefing. Keep that playbook's headings and order, so pstack users see one vocabulary; this skill adds a `## Review guide` section and says what goes under each heading.
+**Relation to pstack's opening-a-pr playbook.** That playbook handles the mechanics (worktree, commits, title, opening the PR) and sets a body of at most 40 lines. This skill replaces only its body rules, because a body a reviewer approves from needs more room than a one-minute briefing. Keep that playbook's headings and order, so pstack users see one vocabulary; this skill adds a final `## Read the code here` section and says what goes under each heading.
 
 ## 0. Is this one PR?
 
@@ -36,7 +36,7 @@ State the change's purpose in one sentence without "and".
 If you cannot, the PR probably does more than one thing: for example a refactor plus a behavior change, or two unrelated fixes.
 Stop and tell the user. Suggest the split (see `plan-pr-structure`) and let them decide. If they keep one PR, describe each part under its own sub-heading and say in the opening that the PR combines them.
 
-A description cannot make a large PR safe to approve unread. A body over about 800 words, or a review guide that needs a long reading order, means the PR wants splitting, not a better description.
+A description cannot make a large PR safe to approve unread. A body over about 800 words, or a long "Read the code here" list, means the PR wants splitting, not a better description.
 
 ## 1. Collect the facts
 
@@ -67,13 +67,6 @@ Order the body from coarse to fine, so a reader can stop at any point with a cor
 
 **`## Why`.** First, one to three sentences: what the change does and why, so a reviewer who reads only this knows whether the PR is theirs and what is at stake. Lead with the effect on a person or system, not a file or class name. Then, if needed, the problem in more depth: who has it, how often or how bad, and links. Restate what a link says in a sentence; links rot. The problem must stay true if a different solution were picked: "there is no cache" is a solution, not a problem.
 
-**`## Review guide`** (added by this skill; place it right after Why). This is what makes trusting the body safe. Each part is optional:
-
-- **Read the code here.** The places the body does not fully specify, so a reviewer cannot approve them from the text: tricky concurrency, security-relevant lines, anything you are unsure of, and anything step 4 left uncovered. Name the file and symbol, and the question to answer. If there are none, write "The description covers every behavior change in the diff."
-- **Where I am unsure.** The call you made, why, and what would make it wrong.
-- **Skimmable.** Generated code, renames, mechanical edits, lockfiles, each with a clause on why it is safe to skim.
-- **Reading order,** only for about ten or more non-generated files: the new contract, its first consumer, the wiring, the mechanical rest.
-
 **`## What changed`.** The design, at the level of contracts and behavior, never a file-by-file list:
 
 - The new or changed interface, schema, or format. Show a short before and after snippet when the shape matters.
@@ -97,6 +90,8 @@ For a bug fix, use **Before** (the faulty mechanism, naming the function or path
 - "Verified by `<person>` per `<commit or comment>`." (attributed, not restated as yours)
 
 Name the regression each new test would catch and what is **not** covered. Never write an intention as a result.
+
+**`## Read the code here`** (added by this skill; always last, and omitted when empty). A short list of the places the body does not fully pin down, so a reviewer cannot approve them from the text and should read the code: tricky concurrency, security-relevant lines, anything step 4 left uncovered, and anything you are unsure of. One bullet each: the file and symbol, and the question to answer ("`bucket.go` `refill()`: is clock skew between replicas handled?"). If you are unsure of a call you made, say what would make it wrong. It comes last because its pointers only make sense once What changed has described the design.
 
 ### PR-specific writing rules
 
