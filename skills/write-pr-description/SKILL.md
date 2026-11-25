@@ -50,16 +50,12 @@ Most of what the body needs is not in the diff.
 - **Verification.** What you actually ran and what it showed.
 - **Uncertainty.** What you are unsure of, what you inferred, what you did not handle.
 
-When you did not write the branch yourself:
+If this session did not write the code (it was written in an earlier agent session, or by hand), read the commits and the diff first, and verify any claim a commit message makes before repeating it:
 
 ```bash
-git --no-pager log --format='%h %s%n%b' <base>..HEAD   # commit bodies carry the why
-git --no-pager diff --stat <base>...HEAD
+git --no-pager log --format='%h %s%n%b' <base>..HEAD
 git --no-pager diff <base>...HEAD
-gh pr view <n> --json title,body,baseRefName,commits,files   # if a PR exists
 ```
-
-Verify claims you carry over. "Same pattern as X" or "no behavior change" in a commit message is an assertion about code. Check it before you repeat it.
 
 If the session that did the work is still open, write the description there. A fresh session has only the diff and commit messages.
 
