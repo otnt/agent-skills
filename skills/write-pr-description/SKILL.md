@@ -135,7 +135,3 @@ After any later push that changes behavior, scope, or risk, rewrite the body to 
 [references/examples.md](references/examples.md) has full examples, each followed by notes on why it works: a small fix, a bug fix with a non-obvious cause, a feature with a design to explain, one step of a planned series, and an annotated bad draft. Read it before your first description in a session.
 
 [references/house-examples.md](references/house-examples.md) holds examples from this user's own merged PRs. When it has entries, they outrank the generic ones on tone, length, and conventions.
-
-## Credit
-
-Builds on Google's [Writing good CL descriptions](https://google.github.io/eng-practices/review/developer/cl-descriptions.html) (CC BY 3.0) and on ideas from the Warp, PostHog, Shopware, tldraw, and Sentry PR-description skills. See the repository README.

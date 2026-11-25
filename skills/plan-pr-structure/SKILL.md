@@ -100,7 +100,3 @@ Each PR's description (`write-pr-description`) states its one reason under Why, 
 - **A refactor that changes behavior "slightly".** Then it is not a refactor. Split the behavior change out.
 - **Splitting after review starts.** Reviewers lose their comments and context. Plan first.
 - **Too small to understand.** Three 20-line PRs that only make sense together are one PR.
-
-## Credit
-
-The definition of a self-contained change, the size anchors, and most of the cuts in step 2 adapt Google's [Small CLs](https://google.github.io/eng-practices/review/developer/small-cls.html) guide (CC BY 3.0). Expand, migrate, contract is a widely used migration pattern, not from that guide.
