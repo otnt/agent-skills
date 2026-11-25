@@ -1,6 +1,6 @@
 ---
 name: write-pr-description
-description: Writes or refreshes a pull request title and body so a reviewer can understand what the change does, why, and how it is designed without reading the code, then checks every claim in the body against the diff. Use whenever opening a PR, filling a PR template, rewriting a stale description, or when the user says "open a PR", "write this up", or "put this up for review".
+description: Writes or refreshes a pull request title and body so a reviewer can understand what the change does, why, and how it is designed without reading the code, then checks every claim in the body against the diff. Use whenever opening a PR, rewriting a stale description, or when the user says "open a PR", "write this up", or "put this up for review".
 ---
 
 # Write a PR description
@@ -11,7 +11,7 @@ A reviewer who reads only the body should know what the change does, why it exis
 That goal sets three requirements:
 
 1. **Complete.** Every behavior change is in the body. A behavior change that is only in the diff is a behavior change nobody reviewed.
-2. **True.** Every claim matches the diff. The body is the one part of a PR that no CI checks, so this skill checks it (step 5).
+2. **True.** Every claim matches the diff. The body is the one part of a PR that no CI checks, so this skill checks it (step 4).
 3. **Honest about its limits.** Where the body does not fully describe the code, it says so and names the code the reviewer must read.
 
 The description is also a permanent record. Someone who finds this change through `git log` or `git blame` in two years cannot ask you why. Write for them too.
@@ -59,11 +59,7 @@ git --no-pager diff <base>...HEAD
 
 If the session that did the work is still open, write the description there. A fresh session has only the diff and commit messages.
 
-## 2. Follow the repository's template
-
-Look for `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE/`, or a contributing guide. If one exists, its headings, order, and instructions win over both this skill and pstack's playbook. Put the content below inside its sections, keep machine-read markers, and answer a section that does not apply in a short clause ("No schema change") instead of deleting it.
-
-## 3. Write top-down
+## 2. Write top-down
 
 Order the body from coarse to fine, so a reader can stop at any point with a correct picture: a skimmer gets the what and why from the first lines, a reviewer weighing the design reads into the decisions, and a close reviewer reaches the details. Drop any heading the change does not need. A one-line fix is a title and two or three sentences under `## Why`.
 
@@ -73,7 +69,7 @@ Order the body from coarse to fine, so a reader can stop at any point with a cor
 
 **`## Review guide`** (added by this skill; place it right after Why). This is what makes trusting the body safe. Each part is optional:
 
-- **Read the code here.** The places the body does not fully specify, so a reviewer cannot approve them from the text: tricky concurrency, security-relevant lines, anything you are unsure of, and anything step 5 left uncovered. Name the file and symbol, and the question to answer. If there are none, write "The description covers every behavior change in the diff."
+- **Read the code here.** The places the body does not fully specify, so a reviewer cannot approve them from the text: tricky concurrency, security-relevant lines, anything you are unsure of, and anything step 4 left uncovered. Name the file and symbol, and the question to answer. If there are none, write "The description covers every behavior change in the diff."
 - **Where I am unsure.** The call you made, why, and what would make it wrong.
 - **Skimmable.** Generated code, renames, mechanical edits, lockfiles, each with a clause on why it is safe to skim.
 - **Reading order,** only for about ten or more non-generated files: the new contract, its first consumer, the wiring, the mechanical rest.
@@ -115,7 +111,7 @@ Run pstack `technical-writing` and `unslop` over the finished body. In addition,
 - **Write less.** Agents over-write, and every extra sentence costs the reviewer. Prefer the shortest body that still lets a reviewer approve from it. Cut: a walkthrough of the diff, paraphrases of new code comments, lists of test names, a fact stated twice, a decision nobody would question. **Never cut** the why, a behavior change, a risk, or a "read the code here" pointer.
 - **Length follows the design to explain, not the diff size.** A mechanical change is one short paragraph. A focused fix is about 50 to 200 words. A feature with a real design is about 200 to 600. Over about 800, go back to step 0: the PR likely wants splitting.
 
-## 4. Self-check
+## 3. Self-check
 
 - Does the title say specifically what the PR does?
 - Is every "why" traceable to a source, or marked as not stated?
@@ -125,7 +121,7 @@ Run pstack `technical-writing` and `unslop` over the finished body. In addition,
 - Does the body read as if the final version were the first, with no versions, iterations, or exploration?
 - Does every decision left in pass the "reviewer would ask why not X" test? Could the body lose one more sentence?
 
-## 5. Check the body against the diff
+## 4. Check the body against the diff
 
 Every time, before creating or updating the PR. Follow [references/verify-against-diff.md](references/verify-against-diff.md). In short:
 
@@ -137,9 +133,9 @@ Every time, before creating or updating the PR. Follow [references/verify-agains
 
 Give the check to a subagent that receives only the diff and the body, not this session's history. A checker that shares your context tends to agree with you. Do not post while any claim is contradicted.
 
-## 6. Create or update the PR
+## 5. Create or update the PR
 
-Use pstack's opening-a-pr playbook for the mechanics if you are in a pstack run; otherwise `gh pr create --body-file`. When updating an existing PR, read the current body first and keep what a person put there: screenshots, links, ticked boxes, a personal note at the top, because `gh pr edit --body-file` replaces the whole body. After later pushes that change behavior, scope, or risk, rewrite the body to match and run step 5 again. Do not append a revision log.
+Use pstack's opening-a-pr playbook for the mechanics if you are in a pstack run; otherwise `gh pr create --body-file`. When updating an existing PR, read the current body first and keep what a person put there: screenshots, links, ticked boxes, a personal note at the top, because `gh pr edit --body-file` replaces the whole body. After later pushes that change behavior, scope, or risk, rewrite the body to match and run step 4 again. Do not append a revision log.
 
 ## Examples
 
